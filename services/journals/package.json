@@ -1,0 +1,32 @@
+{
+    "name": "aurora-journals-service",
+    "version": "1.0.0",
+    "description": "Journals service for Aurora - structured journaling",
+    "main": "src/server.js",
+    "scripts": {
+        "dev": "nodemon src/server.js",
+        "start": "node src/server.js"
+    },
+    "keywords": [
+        "journals",
+        "diary",
+        "entries"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "express": "^4.18.2",
+        "mongoose": "^8.0.3",
+        "express-validator": "^7.0.1",
+        "cors": "^2.8.5",
+        "helmet": "^7.1.0",
+        "morgan": "^1.10.0",
+        "dotenv": "^16.3.1",
+        "axios": "^1.6.2",
+        "pdfkit": "^0.14.0",
+        "markdown-pdf": "^11.0.0"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.2"
+    }
+}

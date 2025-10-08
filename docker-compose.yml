@@ -1,0 +1,301 @@
+version: '3.8'
+
+services:
+  # ============================================================
+  # Frontend - Next.js Application
+  # ============================================================
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=http://localhost:4000
+    networks:
+      - aurora-network
+    restart: unless-stopped
+
+  # ============================================================
+  # API Gateway - Request Routing & Auth Middleware
+  # ============================================================
+  gateway:
+    # build:
+    #   context: ./services/gateway
+    #   dockerfile: Dockerfile
+    image: node:18-alpine # Placeholder
+    ports:
+      - "4000:4000"
+    environment:
+      - IDENTITY_URL=http://identity:5000
+      - THOUGHTS_URL=http://thoughts:4001
+      - JOURNALS_URL=http://journals:4002
+      - PLANNING_URL=http://planning:4003
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key}
+      - REDIS_URL=redis://redis:6379
+    depends_on:
+      - identity
+      - thoughts
+      - journals
+      - planning
+      - redis
+    networks:
+      - aurora-network
+    restart: unless-stopped
+    command: sh -c "echo 'Gateway service not yet implemented' && sleep infinity"
+
+  # ============================================================
+  # Identity Service - Auth & User Management (PostgreSQL)
+  # ============================================================
+  identity:
+    build:
+      context: ./services/identity
+      dockerfile: Dockerfile
+    ports:
+      - "5000:5000"
+    environment:
+      - DATABASE_URL=postgresql://aurora:${POSTGRES_PASSWORD:-aurora_password}@postgres-identity:5432/aurora_identity
+      - JWT_SECRET=${JWT_SECRET:-your-secret-key}
+      - JWT_EXPIRY=15m
+      - REFRESH_TOKEN_EXPIRY=7d
+      - REDIS_URL=redis://redis:6379
+      - FRONTEND_URL=http://frontend:3000
+      - NODE_ENV=production
+    depends_on:
+      postgres-identity:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - aurora-network
+    restart: unless-stopped
+
+  postgres-identity:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=aurora_identity
+      - POSTGRES_USER=aurora
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-aurora_password}
+    volumes:
+      - postgres-identity-data:/var/lib/postgresql/data
+    networks:
+      - aurora-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U aurora -d aurora_identity" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================
+  # Thoughts Service - Quick Capture (MongoDB)
+  # ============================================================
+  thoughts:
+    build:
+      context: ./services/thoughts
+      dockerfile: Dockerfile
+    ports:
+      - "4001:4001"
+    environment:
+      - MONGODB_URI=mongodb://mongo-thoughts:27017/aurora_thoughts
+      - IDENTITY_SERVICE_URL=http://identity:5000
+      - FRONTEND_URL=http://frontend:3000
+      - NODE_ENV=production
+    depends_on:
+      mongo-thoughts:
+        condition: service_healthy
+      identity:
+        condition: service_started
+    networks:
+      - aurora-network
+    restart: unless-stopped
+
+  mongo-thoughts:
+    image: mongo:7-jammy
+    environment:
+      - MONGO_INITDB_DATABASE=aurora_thoughts
+    volumes:
+      - mongo-thoughts-data:/data/db
+    networks:
+      - aurora-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================
+  # Journals Service - Structured Journaling (MongoDB)
+  # ============================================================
+  journals:
+    build:
+      context: ./services/journals
+      dockerfile: Dockerfile
+    ports:
+      - "4002:4002"
+    environment:
+      - MONGODB_URI=mongodb://mongo-journals:27017/aurora_journals
+      - IDENTITY_SERVICE_URL=http://identity:5000
+      - FRONTEND_URL=http://frontend:3000
+      - NODE_ENV=production
+    depends_on:
+      mongo-journals:
+        condition: service_healthy
+      identity:
+        condition: service_started
+    networks:
+      - aurora-network
+    restart: unless-stopped
+
+  mongo-journals:
+    image: mongo:7-jammy
+    environment:
+      - MONGO_INITDB_DATABASE=aurora_journals
+    volumes:
+      - mongo-journals-data:/data/db
+    networks:
+      - aurora-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "mongosh", "--eval", "db.adminCommand('ping')" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================
+  # Planning Service - Tasks & Events (PostgreSQL)
+  # ============================================================
+  planning:
+    build:
+      context: ./services/planning
+      dockerfile: Dockerfile
+    ports:
+      - "4003:4003"
+    environment:
+      - DATABASE_URL=postgresql://aurora:${POSTGRES_PASSWORD:-aurora_password}@postgres-planning:5432/aurora_planning
+      - IDENTITY_SERVICE_URL=http://identity:5000
+      - FRONTEND_URL=http://frontend:3000
+      - NODE_ENV=production
+    depends_on:
+      postgres-planning:
+        condition: service_healthy
+      identity:
+        condition: service_started
+    networks:
+      - aurora-network
+    restart: unless-stopped
+
+  postgres-planning:
+    image: postgres:15-alpine
+    environment:
+      - POSTGRES_DB=aurora_planning
+      - POSTGRES_USER=aurora
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-aurora_password}
+    volumes:
+      - postgres-planning-data:/var/lib/postgresql/data
+    networks:
+      - aurora-network
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U aurora -d aurora_planning" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================
+  # Redis - Shared Cache, Sessions, Rate Limiting
+  # ============================================================
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - aurora-network
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ============================================================
+  # Database Management Tools (Development Profile)
+  # ============================================================
+
+  # PGAdmin - PostgreSQL Management
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@aurora.local
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - aurora-network
+    restart: unless-stopped
+    profiles:
+      - dev
+
+  # Mongo Express - MongoDB Management
+  mongo-express-thoughts:
+    image: mongo-express:latest
+    ports:
+      - "8081:8081"
+    environment:
+      - ME_CONFIG_MONGODB_URL=mongodb://mongo-thoughts:27017/
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+    depends_on:
+      - mongo-thoughts
+    networks:
+      - aurora-network
+    restart: unless-stopped
+    profiles:
+      - dev
+
+  mongo-express-journals:
+    image: mongo-express:latest
+    ports:
+      - "8082:8081"
+    environment:
+      - ME_CONFIG_MONGODB_URL=mongodb://mongo-journals:27017/
+      - ME_CONFIG_BASICAUTH_USERNAME=admin
+      - ME_CONFIG_BASICAUTH_PASSWORD=admin
+    depends_on:
+      - mongo-journals
+    networks:
+      - aurora-network
+    restart: unless-stopped
+    profiles:
+      - dev
+
+# ============================================================
+# Networks
+# ============================================================
+networks:
+  aurora-network:
+    driver: bridge
+
+# ============================================================
+# Volumes
+# ============================================================
+volumes:
+  postgres-identity-data:
+    driver: local
+  postgres-planning-data:
+    driver: local
+  mongo-thoughts-data:
+    driver: local
+  mongo-journals-data:
+    driver: local
+  redis-data:
+    driver: local
+  pgadmin-data:
+    driver: local
