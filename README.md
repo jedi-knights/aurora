@@ -28,6 +28,74 @@ docker-compose up -d identity thoughts journals planning
 - **[HEXAGONAL_ARCHITECTURE.md](./HEXAGONAL_ARCHITECTURE.md)** - Architecture guide
 - **[CORE_ARCHITECTURE.md](./CORE_ARCHITECTURE.md)** - 4-service architecture
 
+---
+
+## 📋 Prerequisites
+
+Before you can run Aurora, you need to install the following:
+
+### 1. Install Homebrew (if not already installed)
+
+```bash
+# Check if Homebrew is installed
+brew --version
+
+# If not installed, install Homebrew
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+```
+
+### 2. Install Docker Desktop Community Edition
+
+```bash
+# Install Docker Desktop using Homebrew
+brew install --cask docker
+
+# Verify installation
+docker --version
+docker-compose --version
+```
+
+**After installation:**
+1. Open **Docker Desktop** from Applications
+2. Wait for Docker to start (whale icon in menu bar)
+3. Verify Docker is running:
+   ```bash
+   docker ps
+   # Should show empty list (no errors)
+   ```
+
+**Note:** Docker Desktop includes both Docker Engine and Docker Compose.
+
+### 3. Install Node.js 18+
+
+```bash
+# Install Node.js using Homebrew
+brew install node@18
+
+# Verify installation
+node --version  # Should be v18.x.x or higher
+npm --version
+```
+
+### 4. Install Git (if not already installed)
+
+```bash
+# Git usually comes with macOS, but you can update via Homebrew
+brew install git
+
+# Verify installation
+git --version
+```
+
+### System Requirements
+
+- **macOS:** 10.15 or later
+- **RAM:** 8GB minimum (16GB recommended)
+- **Disk Space:** 20GB free space
+- **CPU:** Intel or Apple Silicon
+
+---
+
 ## 🏗️ Architecture
 
 Aurora is built as a microservices architecture based on Domain-Driven Design (DDD) principles. Each service represents a bounded context with clear responsibilities.
