@@ -53,7 +53,7 @@ services:
       context: ./services/identity
       dockerfile: Dockerfile
     ports:
-      - "5000:5000"
+      - "5001:5000"
     environment:
       - DATABASE_URL=postgresql://aurora:${POSTGRES_PASSWORD:-aurora_password}@postgres-identity:5432/aurora_identity
       - JWT_SECRET=${JWT_SECRET:-your-secret-key}
