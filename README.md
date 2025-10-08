@@ -1,83 +1,115 @@
-# 🌿 Project Concept: Aurora
+# Aurora
 
-> **A unified personal space for thought, journaling, and planning — where each mode feels like its own app, yet everything stays connected.**
+A unified personal space for thought, journaling, and planning — where each mode feels like its own app, yet everything stays connected.
 
----
+## Features
 
-## 🧭 Vision
+Aurora is a modern web application that helps you organize your life in three distinct yet connected sections:
 
-Aurora is designed to give users — like students, creators, and thinkers — a single, serene place to organize their **thoughts**, **journals**, and **plans**.  
+### 💭 Quick Thoughts
+- Capture fleeting ideas and thoughts instantly
+- Simple, distraction-free interface
+- Automatic timestamping
+- Quick keyboard shortcuts (Ctrl+Enter to save)
 
-Instead of switching between apps for notes, calendars, and reflections, Aurora combines them into one cohesive experience while keeping each mode visually and functionally distinct.
+### 📔 Journals
+- Create multiple journals for different aspects of your life
+- Each journal maintains its own collection of entries
+- Sidebar navigation for easy switching between journals
+- Full journal management (create, delete journals and entries)
 
----
+### 📅 Planning & Calendar
+- Daily, weekly, and monthly views
+- Create tasks and events
+- Check off completed items
+- Visual date navigation
+- Color-coded task types (To-Do vs Events)
 
-## 🧩 Core Modes
+## Technology Stack
 
-| Mode | Purpose | Possible Features |
-|------|----------|-------------------|
-| **Journals** | Expressive writing and reflection | Multiple journals (e.g., “Dreams”, “Gratitude”, “Ideas”), markdown or rich-text editor, tags, mood tracking, daily streaks |
-| **Notes / Thoughts** | Quick capture and organization | Notebook hierarchy, tagging, AI-assisted summaries (“Organize this thought into my School Journal”), linking between notes |
-| **Planner / Calendar** | Structure and time management | Calendar view (month/week/day), integration with Google Calendar or local DB, daily agenda + reminders, recurring goals |
-| **Dashboard / Home** | Cohesive overview | Today’s journal prompt, today’s tasks, inspirational quote, quick-add buttons |
-| **Search / Insight Layer** | Cross-module intelligence | “Show me all journal entries where I mentioned ‘anxiety’,” “What goals did I set in May?” |
+- **React 19** - Modern UI framework
+- **TypeScript** - Type-safe development
+- **Vite** - Fast build tool and dev server
+- **CSS3** - Custom styling with gradients and animations
+- **LocalStorage** - Client-side data persistence
 
----
+## Getting Started
 
-## 🎨 Design Language
+### Prerequisites
+- Node.js (v18 or higher)
+- npm
 
-Each section should *feel like its own app* — a distinctive atmosphere within a shared ecosystem:
+### Installation
 
-- **Journals** → calm, serif fonts, warm tones  
-- **Notes** → minimalist, fast, utilitarian  
-- **Planner** → clean, grid-based layout with accent color  
-- **Navigation** → unified through bottom tabs or swipe gestures for subtle cohesion
+1. Clone the repository:
+```bash
+git clone https://github.com/jedi-knights/aurora.git
+cd aurora
+```
 
----
+2. Install dependencies:
+```bash
+npm install
+```
 
-## 🛠️ Technical Stack (Proposed)
+3. Start the development server:
+```bash
+npm run dev
+```
 
-| Layer | Tools |
-|-------|-------|
-| **Frontend (mobile/web)** | Flutter (cross-platform, expressive UI), or Next.js + React Native hybrid |
-| **Backend** | FastAPI (Python) or Supabase (Postgres + Auth + Storage) |
-| **Sync / Storage** | Cloud sync with offline-first local DB (SQLite or IndexedDB) |
-| **AI-Assisted Features (future)** | Optional LLM integration for journaling prompts, automatic tagging, mood detection |
+4. Open your browser to `http://localhost:5173`
 
----
+### Build for Production
 
-## 🌈 MVP Roadmap
+```bash
+npm run build
+```
 
-### **Phase 1 – Foundations**
-- Authentication & user profiles  
-- Journals with multiple categories  
-- Notes with tagging and markdown  
-- Local persistence  
+The built files will be in the `dist` directory.
 
-### **Phase 2 – Planning Integration**
-- Calendar / Agenda view  
-- Task lists with due dates  
-- Sync with external calendars  
+### Preview Production Build
 
-### **Phase 3 – Intelligence Layer**
-- Unified search  
-- AI “Organizer” suggestions  
-- Mood insights and trend graphs  
+```bash
+npm run preview
+```
 
----
+## Features in Detail
 
-## 💡 Optional Enhancements
+### Data Persistence
+All your data is stored locally in your browser using LocalStorage. Your thoughts, journals, and plans persist across sessions.
 
-- **Privacy-first mode:** End-to-end encrypted local storage, optional cloud sync  
-- **Themes & Aesthetics:** Seasonal themes, custom fonts, handwritten modes  
-- **Voice Journaling:** Record and transcribe quick thoughts into text  
-- **Daily Inspiration:** Built-in quote or gratitude prompts  
+### Keyboard Shortcuts
+- **Thoughts & Journals**: Press `Ctrl+Enter` to quickly save your entry
+- Navigate between sections using the top navigation bar
 
----
+### Responsive Design
+Each section has its own unique color scheme and feel:
+- **Thoughts**: Warm peach gradient
+- **Journals**: Cool mint-to-pink gradient  
+- **Planning**: Calm blue-grey gradient
 
-## 🌟 Summary
+## Project Structure
 
-Aurora blends reflection, organization, and planning into one peaceful, powerful digital experience.  
-Each section acts like its own app — beautifully tailored for its purpose — but unified through shared data, design, and insight.
+```
+aurora/
+├── src/
+│   ├── components/
+│   │   ├── Thoughts.tsx       # Quick thoughts component
+│   │   ├── Thoughts.css
+│   │   ├── Journals.tsx       # Multi-journal component
+│   │   ├── Journals.css
+│   │   ├── Planning.tsx       # Calendar & planning component
+│   │   └── Planning.css
+│   ├── App.tsx                # Main app with navigation
+│   ├── App.css
+│   ├── main.tsx               # React entry point
+│   └── index.css              # Global styles
+├── index.html                 # HTML entry point
+├── vite.config.ts            # Vite configuration
+├── tsconfig.json             # TypeScript configuration
+└── package.json              # Dependencies and scripts
+```
 
-This project is both a technical and emotional endeavor: building a tool that nurtures thought, creativity, and structure in everyday life.
+## License
+
+ISC
