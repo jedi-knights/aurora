@@ -17,8 +17,8 @@ export default function Home() {
     ]
 
     return (
-        <div className="flex flex-col h-screen w-full bg-gradient-to-br from-slate-50 to-slate-100">
-            <nav className="bg-gradient-to-r from-purple-600 to-indigo-600 shadow-lg">
+        <div className="flex flex-col h-screen w-full bg-gray-50">
+            <nav className="bg-purple-600 shadow-lg">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between h-16">
                         <div className="flex items-center">
@@ -33,8 +33,8 @@ export default function Home() {
                                     variant={activeSection === id ? "secondary" : "ghost"}
                                     className={
                                         activeSection === id
-                                            ? "bg-white text-purple-600 hover:bg-white/90"
-                                            : "text-white hover:bg-white/10"
+                                            ? "bg-white text-purple-600 hover:bg-gray-100"
+                                            : "text-white hover:bg-purple-700"
                                     }
                                     onClick={() => setActiveSection(id)}
                                 >
@@ -47,7 +47,7 @@ export default function Home() {
                 </div>
             </nav>
 
-            <main className="flex-1 overflow-hidden">
+            <main className="flex-1 overflow-hidden bg-white">
                 {activeSection === 'thoughts' && <Thoughts />}
                 {activeSection === 'journals' && <Journals />}
                 {activeSection === 'planning' && <Planning />}
