@@ -66,14 +66,96 @@ docker-compose --version
 
 **Note:** Docker Desktop includes both Docker Engine and Docker Compose.
 
-### 3. Install Node.js 18+
+### 3. Install Node.js 22.5.1 using NVM (Recommended)
+
+**What is NVM?**
+
+NVM (Node Version Manager) is a tool that allows you to:
+- Install multiple versions of Node.js on the same machine
+- Switch between different Node.js versions easily
+- Set a default Node.js version for your system
+- Manage Node.js versions per project
+
+This is especially useful when working on multiple projects that require different Node.js versions.
+
+**Install NVM:**
 
 ```bash
-# Install Node.js using Homebrew
-brew install node@18
+# Install NVM using Homebrew
+brew install nvm
+
+# Create NVM directory
+mkdir ~/.nvm
+
+# Add NVM to your shell profile (choose based on your shell)
+# For zsh (default on macOS):
+echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.zshrc
+echo '[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"' >> ~/.zshrc
+echo '[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"' >> ~/.zshrc
+
+# For bash:
+# echo 'export NVM_DIR="$HOME/.nvm"' >> ~/.bash_profile
+# echo '[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"' >> ~/.bash_profile
+
+# Reload your shell configuration
+source ~/.zshrc  # or source ~/.bash_profile for bash
+
+# Verify NVM installation
+nvm --version
+```
+
+**Install Node.js 22.5.1 and set as default:**
+
+```bash
+# Install Node.js version 22.5.1
+nvm install 22.5.1
+
+# Set 22.5.1 as the default version
+nvm alias default 22.5.1
+
+# Use the installed version
+nvm use 22.5.1
 
 # Verify installation
-node --version  # Should be v18.x.x or higher
+node --version  # Should show: v22.5.1
+npm --version
+
+# Verify default is set
+nvm current  # Should show: v22.5.1
+```
+
+**Useful NVM Commands:**
+
+```bash
+# List installed Node.js versions
+nvm ls
+
+# List available Node.js versions to install
+nvm ls-remote
+
+# Install latest LTS version
+nvm install --lts
+
+# Switch to a specific version
+nvm use 22.5.1
+
+# Set default version (persists across terminal sessions)
+nvm alias default 22.5.1
+
+# Uninstall a version
+nvm uninstall <version>
+```
+
+**Alternative: Direct Installation via Homebrew**
+
+If you prefer not to use NVM:
+
+```bash
+# Install Node.js directly using Homebrew
+brew install node
+
+# Verify installation
+node --version
 npm --version
 ```
 
