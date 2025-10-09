@@ -1,6 +1,24 @@
-# Aurora - Your Personal Space
+<div align="center">
 
-A unified personal space for thought, journaling, and planning — where each mode feels like its own app, yet everything stays connected.
+# 🌟 Aurora - Your Personal Space
+
+**A unified personal space for thought, journaling, and planning — where each mode feels like its own app, yet everything stays connected.**
+
+[![License](https://img.shields.io/badge/license-ISC-blue.svg)](./LICENSE)
+[![Node Version](https://img.shields.io/badge/node-%3E%3D18-green.svg)](https://nodejs.org)
+[![Docker](https://img.shields.io/badge/docker-required-blue.svg)](https://www.docker.com/)
+[![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](./CONTRIBUTING.md)
+[![Kubernetes](https://img.shields.io/badge/kubernetes-ready-326CE5.svg)](./k8s)
+
+[Features](#-features) •
+[Quick Start](#-quick-start) •
+[Documentation](#-documentation) •
+[Contributing](#-contributing) •
+[Support](#-support)
+
+</div>
+
+---
 
 ## 🎉 **FOUR Services Fully Implemented - 80% Complete!**
 
@@ -23,10 +41,116 @@ docker-compose up -d identity thoughts journals planning
 ```
 
 ### 📖 Essential Docs
-- **[FOUR_SERVICES_COMPLETE.md](./FOUR_SERVICES_COMPLETE.md)** - **ALL 4 services working!**
-- **[NEXT_STEPS.md](./NEXT_STEPS.md)** - What's next (Gateway + Frontend)
-- **[HEXAGONAL_ARCHITECTURE.md](./HEXAGONAL_ARCHITECTURE.md)** - Architecture guide
-- **[CORE_ARCHITECTURE.md](./CORE_ARCHITECTURE.md)** - 4-service architecture
+- **[FOUR_SERVICES_COMPLETE.md](./docs/FOUR_SERVICES_COMPLETE.md)** - **ALL 4 services working!**
+- **[NEXT_STEPS.md](./docs/NEXT_STEPS.md)** - What's next (Gateway + Frontend)
+- **[HEXAGONAL_ARCHITECTURE.md](./docs/HEXAGONAL_ARCHITECTURE.md)** - Architecture guide
+- **[CORE_ARCHITECTURE.md](./docs/CORE_ARCHITECTURE.md)** - 4-service architecture
+
+---
+
+## 📑 Table of Contents
+
+- [Features](#-features)
+- [Tech Stack](#️-tech-stack)
+- [Prerequisites](#-prerequisites)
+- [Quick Start](#-quick-start)
+- [Architecture](#️-architecture)
+- [Development Commands](#️-development-commands)
+- [Project Structure](#-project-structure)
+- [Environment Variables](#-environment-variables)
+- [Deployment](#-deployment)
+- [Testing](#-testing)
+- [Roadmap](#-roadmap)
+- [Contributing](#-contributing)
+- [Support](#-support)
+- [Security](#-security)
+- [Authors](#-authors)
+- [Acknowledgments](#-acknowledgments)
+- [License](#-license)
+
+---
+
+## ✨ Features
+
+### 💭 **Thoughts**
+- Quick capture of fleeting ideas and insights
+- Instant save with timestamp
+- Search and filter your thought stream
+- Clean, distraction-free interface
+
+### 📔 **Journals**
+- Multiple journals for different contexts
+- Rich text entries with timestamps
+- Organize reflections and long-form writing
+- Journal-specific entry management
+
+### 📅 **Planning**
+- Task management with due dates
+- Event scheduling
+- Calendar views (day, week, month)
+- Mark tasks complete with visual feedback
+
+### 🏗️ **Architecture**
+- Microservices architecture with clean separation
+- Hexagonal/Clean Architecture patterns
+- SOLID principles enforced
+- Kubernetes-ready with health probes
+- Docker Compose for local development
+
+### 🔐 **Security**
+- JWT-based authentication
+- Secure password hashing
+- Service-to-service authentication
+- Health check endpoints with DB validation
+
+### 🎨 **Modern UI**
+- Built with Next.js 14 and React 18
+- Tailwind CSS + shadcn/ui components
+- Responsive design
+- Smooth animations and transitions
+
+---
+
+## 🛠️ Tech Stack
+
+### Frontend
+| Technology | Purpose |
+|------------|---------|
+| **Next.js 14** | React framework with SSR |
+| **React 18** | UI library |
+| **Tailwind CSS** | Utility-first styling |
+| **shadcn/ui** | Component library |
+| **Lucide React** | Icon system |
+
+### Backend
+| Technology | Purpose |
+|------------|---------|
+| **Node.js 18** | Runtime environment |
+| **Express** | Web framework |
+| **JWT** | Authentication tokens |
+| **bcrypt** | Password hashing |
+
+### Databases
+| Technology | Purpose |
+|------------|---------|
+| **PostgreSQL 15** | Identity & Planning data |
+| **MongoDB 7** | Thoughts & Journals data |
+| **Redis 7** | Caching & sessions |
+
+### DevOps & Infrastructure
+| Technology | Purpose |
+|------------|---------|
+| **Docker** | Containerization |
+| **Docker Compose** | Local orchestration |
+| **Kubernetes** | Production orchestration |
+| **Makefile** | Development automation |
+
+### Architecture Patterns
+- **Hexagonal Architecture** (Ports & Adapters)
+- **Domain-Driven Design** (DDD)
+- **SOLID Principles**
+- **Clean Code** (cyclomatic complexity ≤ 7)
+- **Microservices** with health probes
 
 ---
 
@@ -562,28 +686,207 @@ docker-compose up -d
 - [ ] Voice-to-text
 - [ ] AI-powered insights
 
+## 🧪 Testing
+
+### Health Check Tests
+
+Test all service health probes:
+```bash
+./test-health-probes.sh
+```
+
+### Manual Testing
+
+```bash
+# Test individual services
+curl http://localhost:5001/health/readiness  # Identity
+curl http://localhost:4001/health/readiness  # Thoughts
+curl http://localhost:4002/health/readiness  # Journals
+curl http://localhost:4003/health/readiness  # Planning
+```
+
+### Service Integration Tests
+
+```bash
+# Run service tests
+./test-services.sh
+```
+
+---
+
 ## 🤝 Contributing
 
-This project is currently in early development. Contributions will be welcome once the basic architecture is complete.
+We welcome contributions! Aurora is an open source project and we appreciate your help.
+
+### How to Contribute
+
+1. **Fork the repository**
+2. **Create a feature branch** (`git checkout -b feature/AmazingFeature`)
+3. **Commit your changes** (`git commit -m 'Add some AmazingFeature'`)
+4. **Push to the branch** (`git push origin feature/AmazingFeature`)
+5. **Open a Pull Request**
+
+### Development Guidelines
+
+- Follow the existing code style
+- Write meaningful commit messages
+- Add tests for new features
+- Update documentation as needed
+- Ensure all health checks pass
+- Keep cyclomatic complexity ≤ 7
+
+### Code of Conduct
+
+This project adheres to a Code of Conduct. By participating, you are expected to uphold this code.
+
+### Areas Needing Help
+
+- 🎨 UI/UX improvements
+- 📝 Documentation
+- 🐛 Bug fixes
+- ✨ New features
+- 🧪 Test coverage
+- 🌐 Internationalization
+
+---
+
+## 💬 Support
+
+### Getting Help
+
+- 📖 **Documentation**: Check the [docs](./docs) folder
+- 🐛 **Bug Reports**: [Open an issue](https://github.com/jedi-knights/aurora/issues/new)
+- 💡 **Feature Requests**: [Request a feature](https://github.com/jedi-knights/aurora/issues/new)
+- 💬 **Discussions**: [GitHub Discussions](https://github.com/jedi-knights/aurora/discussions)
+
+### Troubleshooting
+
+**Services won't start?**
+```bash
+# Check Docker is running
+docker ps
+
+# View service logs
+docker-compose logs identity
+
+# Check health status
+docker-compose ps
+```
+
+**Port already in use?**
+```bash
+# Find process using port
+lsof -i :3000
+
+# Stop conflicting services or change ports in docker-compose.yml
+```
+
+**Database connection issues?**
+```bash
+# Check database health
+docker-compose exec postgres-identity pg_isready -U aurora
+
+# Restart services
+make restart
+```
+
+For more help, see [TROUBLESHOOTING.md](./docs/TROUBLESHOOTING.md) (coming soon).
+
+---
+
+## 🔒 Security
+
+### Reporting Security Vulnerabilities
+
+**Please DO NOT open public issues for security vulnerabilities.**
+
+If you discover a security issue, please contact the maintainers directly:
+- Email: security@example.com (replace with actual contact)
+- Include: Description, steps to reproduce, potential impact
+
+### Security Features
+
+- ✅ JWT-based authentication
+- ✅ Bcrypt password hashing
+- ✅ Environment-based secrets
+- ✅ CORS configuration
+- ✅ Helmet.js security headers
+- ✅ Rate limiting (coming soon)
+- ✅ Input validation
+
+---
+
+## 👥 Authors
+
+**Omar** - *Initial work and architecture* - [@jedi-knights](https://github.com/jedi-knights)
+
+See also the list of [contributors](https://github.com/jedi-knights/aurora/contributors) who participated in this project.
+
+---
+
+## 🙏 Acknowledgments
+
+### Technologies
+
+- **[Next.js](https://nextjs.org/)** - The React Framework for Production
+- **[shadcn/ui](https://ui.shadcn.com/)** - Beautiful UI components
+- **[Tailwind CSS](https://tailwindcss.com/)** - Utility-first CSS framework
+- **[Lucide](https://lucide.dev/)** - Beautiful & consistent icons
+- **[Docker](https://www.docker.com/)** - Containerization platform
+- **[PostgreSQL](https://www.postgresql.org/)** - Powerful relational database
+- **[MongoDB](https://www.mongodb.com/)** - Document database
+- **[Redis](https://redis.io/)** - In-memory data store
+
+### Inspiration
+
+- Personal productivity tools that never quite fit
+- The need for a unified personal space
+- Clean architecture principles
+- Microservices best practices
+
+### Special Thanks
+
+- The open source community for amazing tools
+- Contributors and early testers
+- Everyone who provided feedback
+
+---
 
 ## 📄 License
 
-ISC
+This project is licensed under the ISC License - see the [LICENSE](./LICENSE) file for details.
 
-## 🔗 Links
+Copyright © 2025 Aurora Project
 
-### Documentation
-- [ARCHITECTURE.md](./ARCHITECTURE.md) - Complete architecture documentation
-- [SERVICES_SUMMARY.md](./SERVICES_SUMMARY.md) - Service overview and roadmap
-- [GETTING_STARTED.md](./GETTING_STARTED.md) - Setup and development guide
+---
+
+## 📚 Documentation
+
+### Core Documentation
+- **[Architecture Overview](./docs/ARCHITECTURE.md)** - Complete architecture documentation
+- **[Core Architecture](./docs/CORE_ARCHITECTURE.md)** - 4-service architecture (recommended)
+- **[Hexagonal Architecture](./docs/HEXAGONAL_ARCHITECTURE.md)** - Architecture pattern guide
+- **[Services Summary](./docs/SERVICES_SUMMARY.md)** - Service overview and roadmap
+- **[Getting Started](./docs/GETTING_STARTED.md)** - Setup and development guide
+
+### Operational Documentation
+- **[Kubernetes Health Probes](./docs/KUBERNETES_HEALTH_PROBES.md)** - Health check implementation
+- **[Dependency Analysis](./docs/DEPENDENCY_ANALYSIS.md)** - Service dependencies
+- **[Startup Sequence](./docs/STARTUP_SEQUENCE.md)** - Docker Compose startup order
 
 ### Service Documentation
-- [Frontend](./frontend/README.md)
-- [Identity Service](./services/identity/README.md)
-- [API Gateway](./services/gateway/README.md)
-- [Thoughts Service](./services/thoughts/README.md)
-- [Journals Service](./services/journals/README.md)
-- [Planning Service](./services/planning/README.md)
-- [Search Service](./services/search/README.md)
-- [Notifications Service](./services/notifications/README.md)
-- [Analytics Service](./services/analytics/README.md)
+- **[Frontend](./frontend/README.md)** - Next.js application
+- **[Identity Service](./services/identity/README.md)** - Authentication & authorization
+- **[Thoughts Service](./services/thoughts/README.md)** - Quick thought capture
+- **[Journals Service](./services/journals/README.md)** - Structured journaling
+- **[Planning Service](./services/planning/README.md)** - Task & event management
+
+---
+
+<div align="center">
+
+**Built with ❤️ using modern technologies and clean architecture principles**
+
+[⬆ Back to Top](#-aurora---your-personal-space)
+
+</div>
