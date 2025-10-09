@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # ============================================================
   # Frontend - Next.js Application
@@ -13,6 +11,9 @@ services:
     environment:
       - NODE_ENV=production
       - NEXT_PUBLIC_API_URL=http://localhost:4000
+    depends_on:
+      gateway:
+        condition: service_started
     networks:
       - aurora-network
     restart: unless-stopped
@@ -35,11 +36,16 @@ services:
       - JWT_SECRET=${JWT_SECRET:-your-secret-key}
       - REDIS_URL=redis://redis:6379
     depends_on:
-      - identity
-      - thoughts
-      - journals
-      - planning
-      - redis
+      identity:
+        condition: service_healthy
+      thoughts:
+        condition: service_healthy
+      journals:
+        condition: service_healthy
+      planning:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     networks:
       - aurora-network
     restart: unless-stopped
@@ -277,7 +283,8 @@ services:
       - ME_CONFIG_BASICAUTH_USERNAME=admin
       - ME_CONFIG_BASICAUTH_PASSWORD=admin
     depends_on:
-      - mongo-thoughts
+      mongo-thoughts:
+        condition: service_healthy
     networks:
       - aurora-network
     restart: unless-stopped
@@ -293,7 +300,8 @@ services:
       - ME_CONFIG_BASICAUTH_USERNAME=admin
       - ME_CONFIG_BASICAUTH_PASSWORD=admin
     depends_on:
-      - mongo-journals
+      mongo-journals:
+        condition: service_healthy
     networks:
       - aurora-network
     restart: unless-stopped
