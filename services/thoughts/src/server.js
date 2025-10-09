@@ -24,6 +24,7 @@ const { SearchThoughtsUseCase } = require('./application/useCases/SearchThoughts
 
 // Controllers
 const { ThoughtController } = require('./infrastructure/http/controllers/ThoughtController')
+const { HealthController } = require('./infrastructure/http/controllers/HealthController')
 const { createThoughtRoutes } = require('./infrastructure/http/routes/thoughtRoutes')
 
 async function startServer() {
@@ -60,17 +61,16 @@ async function startServer() {
         searchThoughtsUseCase
     })
 
+    const healthController = new HealthController()
+
     // Routes
     app.use('/api/thoughts', createThoughtRoutes(thoughtController, authMiddleware))
 
-    // Health check
-    app.get('/health', (req, res) => {
-        res.json({
-            status: 'healthy',
-            service: 'thoughts',
-            timestamp: new Date().toISOString()
-        })
-    })
+    // Health check endpoints for Kubernetes probes
+    app.get('/health', healthController.health)
+    app.get('/health/liveness', healthController.liveness)
+    app.get('/health/readiness', healthController.readiness)
+    app.get('/health/startup', healthController.startup)
 
     // Error handling
     app.use(errorHandler)

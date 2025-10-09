@@ -70,6 +70,12 @@ services:
     networks:
       - aurora-network
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:5000/health/readiness" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   postgres-identity:
     image: postgres:15-alpine
@@ -106,10 +112,16 @@ services:
       mongo-thoughts:
         condition: service_healthy
       identity:
-        condition: service_started
+        condition: service_healthy
     networks:
       - aurora-network
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4001/health/readiness" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   mongo-thoughts:
     image: mongo:7-jammy
@@ -144,10 +156,16 @@ services:
       mongo-journals:
         condition: service_healthy
       identity:
-        condition: service_started
+        condition: service_healthy
     networks:
       - aurora-network
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4002/health/readiness" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   mongo-journals:
     image: mongo:7-jammy
@@ -182,10 +200,16 @@ services:
       postgres-planning:
         condition: service_healthy
       identity:
-        condition: service_started
+        condition: service_healthy
     networks:
       - aurora-network
     restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:4003/health/readiness" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
 
   postgres-planning:
     image: postgres:15-alpine

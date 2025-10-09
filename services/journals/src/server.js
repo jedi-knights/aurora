@@ -33,6 +33,7 @@ const { DeleteEntryUseCase } = require('./application/useCases/DeleteEntryUseCas
 // Controllers
 const { JournalController } = require('./infrastructure/http/controllers/JournalController')
 const { EntryController } = require('./infrastructure/http/controllers/EntryController')
+const { HealthController } = require('./infrastructure/http/controllers/HealthController')
 const { createJournalRoutes } = require('./infrastructure/http/routes/journalRoutes')
 const { createEntryRoutes } = require('./infrastructure/http/routes/entryRoutes')
 
@@ -86,18 +87,17 @@ async function startServer() {
         deleteEntryUseCase
     })
 
+    const healthController = new HealthController()
+
     // Routes
     app.use('/api/journals', createJournalRoutes(journalController, authMiddleware))
     app.use('/api/journals/:journalId/entries', createEntryRoutes(entryController, authMiddleware))
 
-    // Health check
-    app.get('/health', (req, res) => {
-        res.json({
-            status: 'healthy',
-            service: 'journals',
-            timestamp: new Date().toISOString()
-        })
-    })
+    // Health check endpoints for Kubernetes probes
+    app.get('/health', healthController.health)
+    app.get('/health/liveness', healthController.liveness)
+    app.get('/health/readiness', healthController.readiness)
+    app.get('/health/startup', healthController.startup)
 
     // Error handling
     app.use(errorHandler)

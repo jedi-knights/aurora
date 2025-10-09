@@ -1,7 +1,11 @@
 'use client'
 
+import { Calendar, CheckCircle2, ChevronLeft, ChevronRight, Circle, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import '../styles/Planning.css'
+import { Badge } from './ui/badge'
+import { Button } from './ui/button'
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card'
+import { Input } from './ui/input'
 
 export default function Planning() {
     const [tasks, setTasks] = useState([])
@@ -113,87 +117,159 @@ export default function Planning() {
     }
 
     return (
-        <div className="planning-container">
-            <div className="planning-header">
-                <h1>📅 Planning & Calendar</h1>
-                <div className="view-controls">
-                    <button className={view === 'day' ? 'active' : ''} onClick={() => setView('day')}>Day</button>
-                    <button className={view === 'week' ? 'active' : ''} onClick={() => setView('week')}>Week</button>
-                    <button className={view === 'month' ? 'active' : ''} onClick={() => setView('month')}>Month</button>
+        <div className="h-full overflow-auto bg-gradient-to-br from-slate-50 to-slate-100">
+            <div className="max-w-7xl mx-auto p-6 space-y-6">
+                {/* Header */}
+                <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                        <Calendar className="w-8 h-8 text-purple-600" />
+                        <h1 className="text-4xl font-bold text-slate-800">Planning & Calendar</h1>
+                    </div>
+                    <div className="flex gap-2">
+                        {['day', 'week', 'month'].map((v) => (
+                            <Button
+                                key={v}
+                                variant={view === v ? "default" : "outline"}
+                                onClick={() => setView(v)}
+                                className={view === v ? "bg-purple-600 hover:bg-purple-700" : ""}
+                            >
+                                {v.charAt(0).toUpperCase() + v.slice(1)}
+                            </Button>
+                        ))}
+                    </div>
                 </div>
-            </div>
 
-            <div className="date-navigation">
-                <button onClick={goToPrevious}>←</button>
-                <button onClick={goToToday} className="today-btn">Today</button>
-                <button onClick={goToNext}>→</button>
-            </div>
-
-            <div className="task-input-section">
-                <input
-                    type="text"
-                    value={newTask}
-                    onChange={(e) => setNewTask(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === 'Enter') addTask()
-                    }}
-                    placeholder="Add a task or event..."
-                />
-                <div className="task-controls">
-                    <input
-                        type="date"
-                        value={selectedDate}
-                        onChange={(e) => setSelectedDate(e.target.value)}
-                    />
-                    <select value={taskType} onChange={(e) => setTaskType(e.target.value)}>
-                        <option value="todo">To-Do</option>
-                        <option value="event">Event</option>
-                    </select>
-                    <button onClick={addTask} className="add-task-btn">Add</button>
-                </div>
-            </div>
-
-            <div className="calendar-view">
-                {getDaysInView().map(date => {
-                    const dayTasks = getTasksForDate(date)
-                    const isToday = date === new Date().toISOString().split('T')[0]
-                    const isSelected = date === selectedDate
-
-                    return (
-                        <div
-                            key={date}
-                            className={`day-column ${isToday ? 'today' : ''} ${isSelected ? 'selected' : ''}`}
-                            onClick={() => setSelectedDate(date)}
-                        >
-                            <div className="day-header">
-                                <div className="day-date">{formatDate(date)}</div>
-                                <div className="task-count">{dayTasks.length} items</div>
-                            </div>
-
-                            <div className="day-tasks">
-                                {dayTasks.length === 0 ? (
-                                    <p className="no-tasks">No plans</p>
-                                ) : (
-                                    dayTasks.map(task => (
-                                        <div key={task.id} className={`task-item ${task.completed ? 'completed' : ''} ${task.category}`}>
-                                            <input
-                                                type="checkbox"
-                                                checked={task.completed}
-                                                onChange={() => toggleTask(task.id)}
-                                            />
-                                            <span className="task-title">{task.title}</span>
-                                            <button onClick={() => deleteTask(task.id)} className="delete-task-btn">
-                                                ×
-                                            </button>
-                                        </div>
-                                    ))
-                                )}
-                            </div>
+                {/* Date Navigation */}
+                <Card className="shadow-lg border-purple-100">
+                    <CardContent className="pt-6">
+                        <div className="flex items-center justify-center gap-4">
+                            <Button onClick={goToPrevious} variant="outline" size="icon">
+                                <ChevronLeft className="w-5 h-5" />
+                            </Button>
+                            <Button onClick={goToToday} variant="secondary" className="min-w-[100px]">
+                                Today
+                            </Button>
+                            <Button onClick={goToNext} variant="outline" size="icon">
+                                <ChevronRight className="w-5 h-5" />
+                            </Button>
                         </div>
-                    )
-                })}
+                    </CardContent>
+                </Card>
+
+                {/* Task Input */}
+                <Card className="shadow-lg border-purple-100">
+                    <CardContent className="pt-6 space-y-4">
+                        <Input
+                            type="text"
+                            value={newTask}
+                            onChange={(e) => setNewTask(e.target.value)}
+                            onKeyDown={(e) => {
+                                if (e.key === 'Enter') addTask()
+                            }}
+                            placeholder="Add a task or event..."
+                            className="text-lg"
+                        />
+                        <div className="flex gap-3">
+                            <Input
+                                type="date"
+                                value={selectedDate}
+                                onChange={(e) => setSelectedDate(e.target.value)}
+                                className="flex-1"
+                            />
+                            <select
+                                value={taskType}
+                                onChange={(e) => setTaskType(e.target.value)}
+                                className="flex-1 h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                            >
+                                <option value="todo">To-Do</option>
+                                <option value="event">Event</option>
+                            </select>
+                            <Button
+                                onClick={addTask}
+                                className="bg-purple-600 hover:bg-purple-700 px-8"
+                            >
+                                Add
+                            </Button>
+                        </div>
+                    </CardContent>
+                </Card>
+
+                {/* Calendar View */}
+                <div className={`grid gap-4 ${view === 'day' ? 'grid-cols-1' :
+                        view === 'week' ? 'grid-cols-7' :
+                            'grid-cols-7'
+                    }`}>
+                    {getDaysInView().map(date => {
+                        const dayTasks = getTasksForDate(date)
+                        const isToday = date === new Date().toISOString().split('T')[0]
+                        const isSelected = date === selectedDate
+
+                        return (
+                            <Card
+                                key={date}
+                                className={`cursor-pointer transition-all ${isToday ? 'border-purple-500 border-2' : ''
+                                    } ${isSelected ? 'shadow-lg ring-2 ring-purple-300' : 'hover:shadow-md'
+                                    }`}
+                                onClick={() => setSelectedDate(date)}
+                            >
+                                <CardHeader className="pb-3">
+                                    <CardTitle className="text-base flex items-center justify-between">
+                                        <span className={isToday ? 'text-purple-600 font-bold' : ''}>
+                                            {formatDate(date)}
+                                        </span>
+                                        <Badge variant={dayTasks.length > 0 ? "default" : "secondary"} className={dayTasks.length > 0 ? "bg-purple-600" : ""}>
+                                            {dayTasks.length}
+                                        </Badge>
+                                    </CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-2">
+                                    {dayTasks.length === 0 ? (
+                                        <p className="text-sm text-slate-400 text-center py-4">No plans</p>
+                                    ) : (
+                                        dayTasks.map(task => (
+                                            <div
+                                                key={task.id}
+                                                className={`flex items-center gap-2 p-2 rounded-md text-sm transition-colors ${task.completed
+                                                        ? 'bg-green-50 text-green-700'
+                                                        : task.category === 'event'
+                                                            ? 'bg-blue-50 text-blue-700'
+                                                            : 'bg-slate-50 text-slate-700'
+                                                    }`}
+                                            >
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        toggleTask(task.id)
+                                                    }}
+                                                    className="flex-shrink-0"
+                                                >
+                                                    {task.completed ? (
+                                                        <CheckCircle2 className="w-4 h-4 text-green-600" />
+                                                    ) : (
+                                                        <Circle className="w-4 h-4" />
+                                                    )}
+                                                </button>
+                                                <span className={`flex-1 truncate ${task.completed ? 'line-through' : ''}`}>
+                                                    {task.title}
+                                                </span>
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation()
+                                                        deleteTask(task.id)
+                                                    }}
+                                                    className="flex-shrink-0 text-red-500 hover:text-red-700"
+                                                >
+                                                    <Trash2 className="w-3 h-3" />
+                                                </button>
+                                            </div>
+                                        ))
+                                    )}
+                                </CardContent>
+                            </Card>
+                        )
+                    })}
+                </div>
             </div>
         </div>
     )
 }
-

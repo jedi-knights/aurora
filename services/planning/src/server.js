@@ -22,6 +22,7 @@ const { GetCalendarUseCase } = require('./application/useCases/GetCalendarUseCas
 
 // Controllers
 const { TaskController } = require('./infrastructure/http/controllers/TaskController')
+const { HealthController } = require('./infrastructure/http/controllers/HealthController')
 const { createTaskRoutes } = require('./infrastructure/http/routes/taskRoutes')
 
 async function startServer() {
@@ -41,7 +42,7 @@ async function startServer() {
 
   // Dependency Injection
   const taskRepository = new PostgresTaskRepository(pool)
-  
+
   const createTaskUseCase = new CreateTaskUseCase(taskRepository)
   const getTaskUseCase = new GetTaskUseCase(taskRepository)
   const getTasksUseCase = new GetTasksUseCase(taskRepository)
@@ -60,17 +61,16 @@ async function startServer() {
     getCalendarUseCase
   })
 
+  const healthController = new HealthController(pool)
+
   // Routes
   app.use('/api/tasks', createTaskRoutes(taskController, authMiddleware))
 
-  // Health check
-  app.get('/health', (req, res) => {
-    res.json({
-      status: 'healthy',
-      service: 'planning',
-      timestamp: new Date().toISOString()
-    })
-  })
+  // Health check endpoints for Kubernetes probes
+  app.get('/health', healthController.health)
+  app.get('/health/liveness', healthController.liveness)
+  app.get('/health/readiness', healthController.readiness)
+  app.get('/health/startup', healthController.startup)
 
   // Error handling
   app.use(errorHandler)

@@ -17,6 +17,7 @@ const { VerifyTokenUseCase } = require('./application/useCases/VerifyTokenUseCas
 
 // Controllers
 const { AuthController } = require('./infrastructure/http/controllers/AuthController')
+const { HealthController } = require('./infrastructure/http/controllers/HealthController')
 const { createAuthRoutes } = require('./infrastructure/http/routes/authRoutes')
 
 async function startServer() {
@@ -47,17 +48,16 @@ async function startServer() {
         verifyTokenUseCase
     })
 
+    const healthController = new HealthController(pool)
+
     // Routes
     app.use('/auth', createAuthRoutes(authController))
 
-    // Health check
-    app.get('/health', (req, res) => {
-        res.json({
-            status: 'healthy',
-            service: 'identity',
-            timestamp: new Date().toISOString()
-        })
-    })
+    // Health check endpoints for Kubernetes probes
+    app.get('/health', healthController.health)
+    app.get('/health/liveness', healthController.liveness)
+    app.get('/health/readiness', healthController.readiness)
+    app.get('/health/startup', healthController.startup)
 
     // Error handling
     app.use(errorHandler)

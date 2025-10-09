@@ -1,7 +1,12 @@
 'use client'
 
+import { BookOpen, Plus, Trash2 } from 'lucide-react'
 import { useEffect, useState } from 'react'
-import '../styles/Journals.css'
+import { Badge } from './ui/badge'
+import { Button } from './ui/button'
+import { Card, CardContent } from './ui/card'
+import { Input } from './ui/input'
+import { Textarea } from './ui/textarea'
 
 export default function Journals() {
     const [journals, setJournals] = useState([])
@@ -81,106 +86,177 @@ export default function Journals() {
     const currentJournal = journals.find(j => j.id === activeJournal)
 
     return (
-        <div className="journals-container">
-            <div className="journals-sidebar">
-                <div className="sidebar-header">
-                    <h2>📔 My Journals</h2>
-                    <button onClick={() => setShowNewJournal(!showNewJournal)} className="new-journal-btn">
-                        +
-                    </button>
+        <div className="h-full flex bg-gradient-to-br from-slate-50 to-slate-100">
+            {/* Sidebar */}
+            <div className="w-80 bg-white border-r shadow-lg overflow-auto">
+                <div className="p-6 border-b bg-gradient-to-r from-purple-600 to-indigo-600">
+                    <div className="flex items-center justify-between mb-4">
+                        <div className="flex items-center gap-2 text-white">
+                            <BookOpen className="w-6 h-6" />
+                            <h2 className="text-xl font-bold">My Journals</h2>
+                        </div>
+                        <Button
+                            onClick={() => setShowNewJournal(!showNewJournal)}
+                            size="icon"
+                            variant="secondary"
+                            className="bg-white text-purple-600 hover:bg-white/90"
+                        >
+                            <Plus className="w-5 h-5" />
+                        </Button>
+                    </div>
+
+                    {showNewJournal && (
+                        <Card className="shadow-lg">
+                            <CardContent className="pt-4 space-y-3">
+                                <Input
+                                    type="text"
+                                    value={newJournalName}
+                                    onChange={(e) => setNewJournalName(e.target.value)}
+                                    placeholder="Journal name"
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') createJournal()
+                                        if (e.key === 'Escape') setShowNewJournal(false)
+                                    }}
+                                    autoFocus
+                                />
+                                <div className="flex gap-2">
+                                    <Button onClick={createJournal} className="flex-1 bg-purple-600 hover:bg-purple-700">
+                                        Create
+                                    </Button>
+                                    <Button onClick={() => setShowNewJournal(false)} variant="outline" className="flex-1">
+                                        Cancel
+                                    </Button>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    )}
                 </div>
 
-                {showNewJournal && (
-                    <div className="new-journal-form">
-                        <input
-                            type="text"
-                            value={newJournalName}
-                            onChange={(e) => setNewJournalName(e.target.value)}
-                            placeholder="Journal name"
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter') createJournal()
-                                if (e.key === 'Escape') setShowNewJournal(false)
-                            }}
-                            autoFocus
-                        />
-                        <div className="form-actions">
-                            <button onClick={createJournal}>Create</button>
-                            <button onClick={() => setShowNewJournal(false)}>Cancel</button>
-                        </div>
-                    </div>
-                )}
-
-                <div className="journals-list">
+                <div className="p-4 space-y-2">
                     {journals.length === 0 ? (
-                        <p className="empty-message">No journals yet</p>
+                        <div className="text-center py-8 text-slate-500">
+                            <BookOpen className="w-12 h-12 mx-auto mb-3 opacity-50" />
+                            <p className="text-sm">No journals yet</p>
+                        </div>
                     ) : (
                         journals.map(journal => (
-                            <div
+                            <Card
                                 key={journal.id}
-                                className={`journal-item ${activeJournal === journal.id ? 'active' : ''}`}
+                                className={`cursor-pointer transition-all ${activeJournal === journal.id
+                                        ? 'border-purple-500 border-2 shadow-md'
+                                        : 'hover:border-purple-300 hover:shadow'
+                                    }`}
                             >
-                                <div onClick={() => setActiveJournal(journal.id)} className="journal-name">
-                                    {journal.name}
-                                    <span className="entry-count">{journal.entries.length}</span>
-                                </div>
-                                <button onClick={() => deleteJournal(journal.id)} className="delete-journal-btn">
-                                    🗑️
-                                </button>
-                            </div>
+                                <CardContent className="p-4">
+                                    <div className="flex items-center justify-between">
+                                        <div
+                                            onClick={() => setActiveJournal(journal.id)}
+                                            className="flex-1 flex items-center justify-between"
+                                        >
+                                            <span className="font-medium text-slate-700">
+                                                {journal.name}
+                                            </span>
+                                            <Badge variant="secondary">
+                                                {journal.entries.length}
+                                            </Badge>
+                                        </div>
+                                        <Button
+                                            onClick={() => deleteJournal(journal.id)}
+                                            variant="ghost"
+                                            size="icon"
+                                            className="ml-2 text-red-500 hover:text-red-700 hover:bg-red-50"
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                    </div>
+                                </CardContent>
+                            </Card>
                         ))
                     )}
                 </div>
             </div>
 
-            <div className="journal-content">
+            {/* Main Content */}
+            <div className="flex-1 overflow-auto">
                 {currentJournal ? (
-                    <>
-                        <div className="journal-header">
-                            <h1>{currentJournal.name}</h1>
+                    <div className="max-w-4xl mx-auto p-6 space-y-6">
+                        <div className="text-center">
+                            <h1 className="text-4xl font-bold text-slate-800">{currentJournal.name}</h1>
                         </div>
 
-                        <div className="entry-input-section">
-                            <textarea
-                                value={newEntry}
-                                onChange={(e) => setNewEntry(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' && e.ctrlKey) addEntry()
-                                }}
-                                placeholder="Write your journal entry... (Ctrl+Enter to save)"
-                                rows={5}
-                            />
-                            <button onClick={addEntry} className="add-entry-btn">
-                                Add Entry
-                            </button>
-                        </div>
+                        <Card className="shadow-lg border-purple-100">
+                            <CardContent className="pt-6 space-y-4">
+                                <Textarea
+                                    value={newEntry}
+                                    onChange={(e) => setNewEntry(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && e.ctrlKey) addEntry()
+                                    }}
+                                    placeholder="Write your journal entry... (Ctrl+Enter to save)"
+                                    rows={5}
+                                    className="resize-none"
+                                />
+                                <Button
+                                    onClick={addEntry}
+                                    className="w-full bg-purple-600 hover:bg-purple-700"
+                                    size="lg"
+                                >
+                                    Add Entry
+                                </Button>
+                            </CardContent>
+                        </Card>
 
-                        <div className="entries-list">
+                        <div className="space-y-4">
                             {currentJournal.entries.length === 0 ? (
-                                <div className="empty-state">
-                                    <p>No entries yet. Start writing!</p>
-                                </div>
+                                <Card className="border-dashed">
+                                    <CardContent className="py-12">
+                                        <div className="text-center text-slate-500">
+                                            <BookOpen className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                                            <p>No entries yet. Start writing!</p>
+                                        </div>
+                                    </CardContent>
+                                </Card>
                             ) : (
                                 currentJournal.entries.map(entry => (
-                                    <div key={entry.id} className="entry-card">
-                                        <div className="entry-content">{entry.content}</div>
-                                        <div className="entry-footer">
-                                            <span className="entry-time">{formatTime(entry.timestamp)}</span>
-                                            <button onClick={() => deleteEntry(entry.id)} className="delete-entry-btn">
-                                                🗑️
-                                            </button>
-                                        </div>
-                                    </div>
+                                    <Card key={entry.id} className="shadow-md hover:shadow-lg transition-shadow border-l-4 border-l-indigo-500">
+                                        <CardContent className="pt-6">
+                                            <div className="space-y-3">
+                                                <p className="text-slate-700 whitespace-pre-wrap leading-relaxed">
+                                                    {entry.content}
+                                                </p>
+                                                <div className="flex items-center justify-between pt-3 border-t">
+                                                    <span className="text-sm text-slate-500">
+                                                        {formatTime(entry.timestamp)}
+                                                    </span>
+                                                    <Button
+                                                        onClick={() => deleteEntry(entry.id)}
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        className="text-red-500 hover:text-red-700 hover:bg-red-50"
+                                                    >
+                                                        <Trash2 className="w-4 h-4" />
+                                                    </Button>
+                                                </div>
+                                            </div>
+                                        </CardContent>
+                                    </Card>
                                 ))
                             )}
                         </div>
-                    </>
+                    </div>
                 ) : (
-                    <div className="no-journal-selected">
-                        <p>Select a journal or create a new one to start</p>
+                    <div className="h-full flex items-center justify-center">
+                        <Card className="border-dashed max-w-md">
+                            <CardContent className="py-12">
+                                <div className="text-center text-slate-500">
+                                    <BookOpen className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                                    <p className="text-lg">Select a journal or create a new one to start</p>
+                                </div>
+                            </CardContent>
+                        </Card>
                     </div>
                 )}
             </div>
         </div>
     )
 }
-
