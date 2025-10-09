@@ -331,22 +331,118 @@ Each service is independently deployable and scalable. See [SERVICES_SUMMARY.md]
 
 ## 🛠️ Development Commands
 
-```bash
-# Using Make
-make help              # Show all available commands
-make up                # Start all services
-make up-dev            # Start with development tools (pgadmin)
-make down              # Stop all services
-make logs              # View all logs
-make logs-frontend     # View frontend logs only
-make shell-postgres    # Open PostgreSQL shell
-make shell-redis       # Open Redis CLI
+### Quick Reference
 
-# Direct Docker Compose
-docker-compose up -d                    # Start services
-docker-compose down                     # Stop services
-docker-compose logs -f frontend         # Follow frontend logs
-docker-compose exec postgres psql -U aurora -d aurora  # PostgreSQL shell
+```bash
+make help              # Show all available commands with descriptions
+```
+
+### Service Management
+
+```bash
+# Start/Stop Services
+make up                # Start all services with Docker Compose
+make up-dev            # Start all services including development tools (pgadmin, mongo-express)
+make down              # Stop all services
+make down-volumes      # Stop all services and remove volumes (clean slate)
+make restart           # Restart all services
+make ps                # Show running containers
+make clean             # Remove all containers, volumes, and images
+
+# Service-Specific Operations
+make restart-frontend  # Restart frontend service only
+make restart-api       # Restart API service only
+```
+
+### Building & Installation
+
+```bash
+# Docker Images
+make build             # Build all Docker images
+
+# Dependencies
+make install           # Install all dependencies (frontend + backend)
+make frontend-install  # Install frontend dependencies
+make backend-install   # Install backend dependencies (placeholder)
+```
+
+### Development Mode
+
+```bash
+# Local Development
+make dev               # Start development environment
+make dev-frontend      # Start frontend in development mode (hot reload)
+make dev-api           # Start API service in development mode (placeholder)
+```
+
+### Logs & Monitoring
+
+```bash
+# View Logs
+make logs              # View logs from all services (follow mode)
+make logs-frontend     # View frontend logs only
+make logs-api          # View API service logs only
+make logs-auth         # View auth service logs only
+```
+
+### Database Operations
+
+```bash
+# Database Management
+make db-migrate        # Run database migrations (placeholder)
+make db-seed           # Seed database with test data (placeholder)
+```
+
+### Shell Access
+
+```bash
+# Container Shells
+make shell-frontend    # Open shell in frontend container
+make shell-api         # Open shell in API container
+make shell-postgres    # Open PostgreSQL shell (psql)
+make shell-redis       # Open Redis CLI
+```
+
+### Direct Docker Compose Commands
+
+For more control, you can use Docker Compose directly:
+
+```bash
+# Service Management
+docker-compose up -d                              # Start all services
+docker-compose up -d identity thoughts journals   # Start specific services
+docker-compose down                               # Stop all services
+docker-compose ps                                 # Show service status
+
+# Logs
+docker-compose logs -f frontend                   # Follow frontend logs
+docker-compose logs --tail=100 identity           # Last 100 lines from identity service
+
+# Shell Access
+docker-compose exec frontend sh                   # Frontend shell
+docker-compose exec postgres psql -U aurora -d aurora_identity  # PostgreSQL shell
+docker-compose exec redis redis-cli               # Redis CLI
+docker-compose exec mongo-thoughts mongosh        # MongoDB shell (thoughts)
+
+# Building
+docker-compose build                              # Build all services
+docker-compose build --no-cache identity          # Rebuild identity service
+
+# Scaling
+docker-compose up -d --scale thoughts=3           # Run 3 instances of thoughts service
+```
+
+### Health Check Testing
+
+```bash
+# Test all service health probes
+./test-health-probes.sh
+
+# Manual health checks
+curl http://localhost:5001/health/readiness      # Identity service
+curl http://localhost:4001/health/readiness      # Thoughts service
+curl http://localhost:4002/health/readiness      # Journals service
+curl http://localhost:4003/health/readiness      # Planning service
 ```
 
 ## 📁 Project Structure
